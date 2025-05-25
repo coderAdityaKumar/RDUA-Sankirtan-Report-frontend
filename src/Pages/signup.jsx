@@ -5,6 +5,7 @@ import {
   LockClosedIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
+import logo from "../assets/logo.png"
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -86,7 +87,7 @@ const Signup = () => {
             <div className=" h-24 w-24 mx-auto flex items-center justify-center">
               {/* Replace this div with your actual logo */}
               <img
-                src="src/assets/logo.png"
+                src={logo}
                 alt="Srila Prabhupada"
                 className="h-20 w-20 rounded-full border-4 border-amber-500 object-contain "
               />

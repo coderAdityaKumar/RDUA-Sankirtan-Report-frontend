@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png"
 
 import {
   EnvelopeIcon,
@@ -81,7 +82,7 @@ const Login = () => {
             <div className=" h-24 w-24 mx-auto flex items-center justify-center">
               {/* Replace this div with your actual logo */}
               <img
-                src="src/assets/logo.png"
+                src={logo}
                 alt="Srila Prabhupada"
                 className="h-20 w-20 rounded-full border-4 border-amber-500 object-contain "
               />

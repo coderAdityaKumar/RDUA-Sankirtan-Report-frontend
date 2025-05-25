@@ -1,11 +1,12 @@
 import { FaInfoCircle } from 'react-icons/fa';
+import logo from "../assets/logo.png"
 
 const Header = () => (
   <header className="bg-amber-50 py-6 px-4 shadow-md">
     <div className="max-w-6xl flex flex-col md:flex-row items-center">
       <div className="flex items-center mb-4 md:mb-0">
         <img 
-          src="src/assets/logo.png" 
+          src={logo} 
           alt="Srila Prabhupada" 
           className="h-20 w-20 rounded-full border-4 border-amber-500 object-contain "
         />
