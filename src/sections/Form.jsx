@@ -1,29 +1,82 @@
 import Tooltip from "../Components/Tooltip";
 import { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { FaInfoCircle } from "react-icons/fa";
 const SankirtanForm = () => {
+  const baseURL = import.meta.env.VITE_BACKEND_URL;
   const today = new Date().toISOString().split("T")[0];
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     date: today,
-    group: "",
-    books: "",
-    kkp: "",
-    sankirtan: "",
-    pleasurePoints: "",
+    groupName: "",
+    numberOfBooksDistributed: "",
+    krishnaKathaPoints: "",
+    sankirtanPoints: "",
+    gaurNitaiPleasingPoints: "",
   });
 
   const groups = [
-    "Nityānanda R.D.U.A.",
-    "Prabhupāda R.D.U.A.",
-    "R.D.U.A. Kathāmritam",
-    "B𝙤𝙙𝙝𝙖𝙮𝙖𝙣𝙩𝙖𝙝 𝙥𝙖𝙧𝙖𝙨𝙥𝙖𝙧𝙖𝙢 R.D.U.A.",
-    "Balarāma R.D.U.A.",
-    "Gauraṅga R.D.U.A.",
+    "Nityananda R.D.U.A.",
+    "Prabhupada R.D.U.A.",
+    "R.D.U.A. Kathamritam",
+    "Bodhayantah parasparam R.D.U.A.",
+    "Balarama R.D.U.A.",
+    "Gauranga R.D.U.A.",
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Submit logic here
+    setLoading(true);
+    try {
+      const {
+        date,
+        groupName,
+        numberOfBooksDistributed,
+        krishnaKathaPoints,
+        sankirtanPoints,
+        gaurNitaiPleasingPoints,
+      } = formData;
+      console.log(formData);
+      const {data}= await axios.post(
+        `${baseURL}/report/add-report`,
+        {
+          date,
+          groupName,
+          numberOfBooksDistributed,
+          krishnaKathaPoints,
+          sankirtanPoints,
+          gaurNitaiPleasingPoints,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `${localStorage.getItem("jwt")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // console.log(data);
+
+      if (data.status == "success") {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      console.error("Error Response:", error.response);
+      const errorMessage =
+        error.response?.data?.message || "User registration failed";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+      formData.groupName="";
+      formData.numberOfBooksDistributed="";
+      formData.gaurNitaiPleasingPoints="";
+      formData.krishnaKathaPoints="";
+      formData.sankirtanPoints="";
+    }
   };
 
   return (
@@ -79,9 +132,9 @@ const SankirtanForm = () => {
             </Tooltip>
 
             <select
-              value={formData.group}
+              value={formData.groupName}
               onChange={(e) =>
-                setFormData({ ...formData, group: e.target.value })
+                setFormData({ ...formData, groupName: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 appearance-none bg-white"
               required
@@ -113,9 +166,12 @@ const SankirtanForm = () => {
             <input
               type="number"
               min="0"
-              value={formData.books}
+              value={formData.numberOfBooksDistributed}
               onChange={(e) =>
-                setFormData({ ...formData, books: e.target.value })
+                setFormData({
+                  ...formData,
+                  numberOfBooksDistributed: e.target.value,
+                })
               }
               className="w-full px-4 py-2 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="Number of books"
@@ -142,9 +198,9 @@ const SankirtanForm = () => {
               type="number"
               min="0"
               step="0.5"
-              value={formData.kkp}
+              value={formData.krishnaKathaPoints}
               onChange={(e) =>
-                setFormData({ ...formData, kkp: e.target.value })
+                setFormData({ ...formData, krishnaKathaPoints: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="Enter KKP points"
@@ -170,9 +226,9 @@ const SankirtanForm = () => {
             <input
               type="number"
               min="0"
-              value={formData.sankirtan}
+              value={formData.sankirtanPoints}
               onChange={(e) =>
-                setFormData({ ...formData, sankirtan: e.target.value })
+                setFormData({ ...formData, sankirtanPoints: e.target.value })
               }
               className="w-full px-4 py-2 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="Number of people"
@@ -200,9 +256,12 @@ const SankirtanForm = () => {
             <input
               type="number"
               min="0"
-              value={formData.pleasurePoints}
+              value={formData.gaurNitaiPleasingPoints}
               onChange={(e) =>
-                setFormData({ ...formData, pleasurePoints: e.target.value })
+                setFormData({
+                  ...formData,
+                  gaurNitaiPleasingPoints: e.target.value,
+                })
               }
               className="w-full px-4 py-2 rounded-lg border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="Number of people"
@@ -214,9 +273,40 @@ const SankirtanForm = () => {
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200"
+              disabled={loading}
+              className={`w-full text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center ${
+                loading
+                  ? "bg-amber-400 cursor-not-allowed"
+                  : "bg-amber-600 hover:bg-amber-700"
+              }`}
             >
-              Submit Report
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 018 8h-4l3 3 3-3h-4a8 8 0 01-8 8v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
+                    ></path>
+                  </svg>
+                  Submitting...
+                </>
+              ) : (
+                "Submit Report"
+              )}
             </button>
           </div>
         </form>

@@ -1,6 +1,7 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 import {
   EnvelopeIcon,
@@ -10,23 +11,25 @@ import {
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 
 const Login = () => {
+  const navigate = useNavigate();
   const baseURL = import.meta.env.VITE_BACKEND_URL;
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
+    mobileNumber: "",
     password: "",
   });
 
-//   useEffect(() => {
-//     if (token) {
-//       console.log("redirecting")
-//       // Optionally verify token with backend
-//     //   window.location.href = "https://sadhna-tracker-app-frontend.vercel.app";
-//       // window.location.href="http://localhost:5173"; // or replace with your actual home route
-//     }
-//   }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      toast.success("You are already logged in");
+      setTimeout(() => {
+        window.location.href = "http://localhost:5173"; // or your actual home route
+      }, 1500); // Wait 1.5 seconds before redirecting
+    }
+  }, []);
 
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -37,11 +40,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { email, password } = formData;
+      const { mobileNumber, password } = formData;
       const { data } = await axios.post(
         `${baseURL}/auth/login-user`,
         {
-          email,
+          mobileNumber,
           password,
         },
         {
@@ -49,15 +52,20 @@ const Login = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      if (data.success) {
-        localStorage.setItem("jwt", data.data.token);
+      console.log(data);
+      if (data.status == "success") {
+        localStorage.setItem("jwt", data.token);
         toast.success("Login successfully!");
-        window.location.href = "https://sadhna-tracker-app-frontend.vercel.app";
+        navigate("/");
       } else {
         toast.error(data.message || "Login failed");
       }
     } catch (error) {
-      toast.error(error.data?.message || "Login failed.Please try again");
+      console.log(error);
+      console.error("Error Response:", error.response);
+      const errorMessage =
+        error.response?.data?.message || "User registration failed";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -68,16 +76,27 @@ const Login = () => {
       <div className="w-full max-w-md">
         {/* Header with Logo */}
         <div className="text-center mb-8">
-          
+          {/* Logo Container with Sacred Geometry */}
+          <div className=" mx-auto mb-4">
+            <div className=" h-24 w-24 mx-auto flex items-center justify-center">
+              {/* Replace this div with your actual logo */}
+              <img
+                src="src/assets/logo.png"
+                alt="Srila Prabhupada"
+                className="h-20 w-20 rounded-full border-4 border-amber-500 object-contain "
+              />
+            </div>
+          </div>
 
-          <h1 className="text-3xl font-bold text-purple-800 mb-1 font-serif">
-            Hari Seva Tracker
+          <h1 className="text-3xl font-bold text-amber-800 mb-1 font-serif">
+            R.D.U.A Sankirtan Report
           </h1>
-          <h2 className="text-xl text-purple-600 mb-2 font-serif">
+          <h2 className="text-xl text-amber-600 mb-2 font-serif">
             Hare Krishna !
           </h2>
-          <p className="text-gray-600 italic">Track your spiritual offerings and service to Lord Krishna with
-            devotion</p>
+          <p className="text-amber-900 italic">
+            Read • Discuss • Understand • Apply
+          </p>
         </div>
 
         {/* Form Container */}
@@ -89,29 +108,29 @@ const Login = () => {
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400"></div>
 
           {/* Phone Number */}
-            <div className="space-y-1">
-              <label
-                htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Phone Number
-              </label>
-              <div className="relative mt-1 rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-400 text-sm">+91</span>
-                </div>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  required
-                  className="block w-full pl-12 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="Enter your phone number"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
+          <div className="space-y-1">
+            <label
+              htmlFor="mobileNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Phone Number
+            </label>
+            <div className="relative mt-1 rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-400 text-sm">+91</span>
               </div>
+              <input
+                type="tel"
+                id="mobileNumber"
+                name="mobileNumber"
+                required
+                className="block w-full pl-12 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                placeholder="Enter your phone number"
+                value={formData.mobileNumber}
+                onChange={handleChange}
+              />
             </div>
+          </div>
 
           {/* Password */}
           <div className="space-y-1">
@@ -122,12 +141,12 @@ const Login = () => {
               >
                 Password
               </label>
-              <a
+              {/* <a
                 href="/forgot-password"
                 className="text-sm font-medium text-purple-600 hover:text-purple-500"
               >
                 Forgot password?
-              </a>
+              </a> */}
             </div>
             <div className="relative mt-1 rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

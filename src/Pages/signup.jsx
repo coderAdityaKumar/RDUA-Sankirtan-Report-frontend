@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   UserIcon,
   EnvelopeIcon,
@@ -14,13 +14,21 @@ const Signup = () => {
   const navigateTo = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
     firstName: "",
     lastName: "",
-    email: "",
+    mobileNumber: "",
     password: "",
-    hostel: "",
   });
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      toast.success("You are already logged in");
+      setTimeout(() => {
+        window.location.href = "http://localhost:5173"; // or your actual home route
+      }, 1500); // Wait 1.5 seconds before redirecting
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,27 +42,26 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { username, firstName, lastName, email, hostel, password } =
-        formData;
+      const { firstName, lastName, mobileNumber, password } = formData;
       const { data } = await axios.post(
         `${baseURL}/auth/register-user`,
         {
-          username,
           firstName,
           lastName,
-          email,
+          mobileNumber,
           password,
-          hostel,
         },
         {
-          withCredentials: true, // Include cookies
+          withCredentials: true,
           headers: {
-            "Content-Type": "application/json", // Tell server it’s JSON
+            "Content-Type": "application/json",
           },
         }
       );
-      if (data.success) {
-        toast.success(data.message || "user registered successfully");
+      console.log(data);
+
+      if (data.status == "success") {
+        toast.success(data.message || "User registered successfully");
         navigateTo("/login");
       } else {
         toast.error(data.message || "User registration failed");
@@ -63,12 +70,11 @@ const Signup = () => {
       console.log(error);
       console.error("Error Response:", error.response);
       const errorMessage =
-        error.response?.data?.message || "user registration failed";
+        error.response?.data?.message || "User registration failed";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
-    }
-  };
+  }};
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-blue-50 flex items-center justify-center p-4">
@@ -76,15 +82,24 @@ const Signup = () => {
         {/* Header with Logo */}
         <div className="text-center mb-8">
           {/* Logo Container with Sacred Geometry */}
-          <h1 className="text-3xl font-bold text-purple-800 mb-1 font-serif">
-            Hari Seva Tracker
+          <div className=" mx-auto mb-4">
+            <div className=" h-24 w-24 mx-auto flex items-center justify-center">
+              {/* Replace this div with your actual logo */}
+              <img
+                src="src/assets/logo.png"
+                alt="Srila Prabhupada"
+                className="h-20 w-20 rounded-full border-4 border-amber-500 object-contain "
+              />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold text-amber-800 mb-1 font-serif">
+            R.D.U.A Sankirtan Report
           </h1>
-          <h2 className="text-xl text-purple-600 mb-2 font-serif">
+          <h2 className="text-xl text-amber-600 mb-2 font-serif">
             Hare Krishna!
           </h2>
-          <p className="text-gray-600 italic">
-            Track your spiritual offerings and service to Lord Krishna with
-            devotion
+          <p className="text-amber-900 italic">
+            Read • Discuss • Understand • Apply
           </p>
         </div>
 
@@ -93,7 +108,6 @@ const Signup = () => {
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden p-8 space-y-6 border border-purple-100 relative">
             {/* Sacred Border Decoration */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400"></div>
-
 
             {/* Name Fields */}
             <div className="grid grid-cols-2 gap-4">
@@ -134,10 +148,10 @@ const Signup = () => {
               </div>
             </div>
 
-            {/* Phone Number */}
+            {/* mobileNumber */}
             <div className="space-y-1">
               <label
-                htmlFor="phone"
+                htmlFor="mobileNumber"
                 className="block text-sm font-medium text-gray-700"
               >
                 Phone Number
@@ -148,12 +162,12 @@ const Signup = () => {
                 </div>
                 <input
                   type="tel"
-                  id="phone"
-                  name="phone"
+                  id="mobileNumber"
+                  name="mobileNumber"
                   required
                   className="block w-full pl-12 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder="Enter your phone number"
-                  value={formData.phone}
+                  value={formData.mobileNumber}
                   onChange={handleChange}
                 />
               </div>
