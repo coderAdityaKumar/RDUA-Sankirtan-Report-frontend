@@ -24,7 +24,7 @@ const Login = () => {
     if (token) {
       toast.success("You are already logged in");
       setTimeout(() => {
-        window.location.href = "http://localhost:5173"; // or your actual home route
+        window.location.href = "https://rdua-sankirtan-report.vercel.app"; // or your actual home route
       }, 1500); // Wait 1.5 seconds before redirecting
     }
   }, []);
