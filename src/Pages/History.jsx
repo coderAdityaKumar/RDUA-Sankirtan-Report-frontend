@@ -80,7 +80,7 @@ const HistoryPage = () => {
       <main className="flex-grow max-w-4xl mx-auto py-8 px-4 w-full">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-amber-800 font-serif">
-            Ekadashi Sankirtan History
+            R.D.U.A Sankirtan History
           </h2>
           <p className="text-amber-600 mt-2">
             View group-wise reports from the last Ekadashi
@@ -136,7 +136,7 @@ const HistoryPage = () => {
                     Sankirtan
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-amber-800">
-                    Pleasure Points
+                    Gaur Nitai PP
                   </th>
                 </tr>
               </thead>
