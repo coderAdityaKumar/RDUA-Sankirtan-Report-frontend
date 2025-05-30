@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../sections/Header";
+
+import balaramRDUA from "../assets/Balarama R.D.U.A..jpg";
+import bodhyantahParasparamRDUA from "../assets/Bodhayantah parasparam R.D.U.A..jpg";
+import gaurangaRDUA from "../assets/Gauranga R.D.U.A..jpg";
+import nityanandaRDUA from "../assets/Nityananda R.D.U.A..jpg";
+import prabhupadaRDUA from "../assets/Prabhupada R.D.U.A..jpg";
+import RDUAKathamritam from "../assets/R.D.U.A. Kathamritam.jpg";
 import SankirtanForm from "../sections/Form";
 import FloatingAdminButton from "../Components/AdminButton";
 import Footer from "../sections/Footer";
@@ -14,14 +21,19 @@ import LiveButton from "../Components/LiveButton";
 // Set app element for accessibility
 Modal.setAppElement("#root");
 
-const RDUA_GROUPS = [
-  "Nityananda R.D.U.A.",
-  "Prabhupada R.D.U.A.",
-  "R.D.U.A. Kathamritam",
-  "Bodhayantah parasparam R.D.U.A.",
-  "Balarama R.D.U.A.",
-  "Gauranga R.D.U.A.",
-];
+
+
+// Group logo mapping
+const GROUP_LOGOS = {
+  "Nityananda R.D.U.A.": nityanandaRDUA,
+  "Prabhupada R.D.U.A.": prabhupadaRDUA,
+  "R.D.U.A. Kathamritam": RDUAKathamritam,
+  "Bodhayantah parasparam R.D.U.A.": bodhyantahParasparamRDUA,
+  "Balarama R.D.U.A.": balaramRDUA,
+  "Gauranga R.D.U.A.": gaurangaRDUA,
+};
+
+const RDUA_GROUPS = Object.keys(GROUP_LOGOS);
 
 function Home() {
   const baseURL = import.meta.env.VITE_BACKEND_URL;
@@ -122,7 +134,8 @@ function Home() {
     fetchDashboardData();
   };
 
-  return (
+  
+    return (
     <div className="min-h-screen flex flex-col bg-amber-50">
       <Header />
 
@@ -130,7 +143,6 @@ function Home() {
         {/* Dashboard Header */}
         <div className="max-w-6xl mx-auto text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            {/* <GiDivineGate className="text-amber-600 text-4xl mr-3" /> */}
             <div className="flex items-center gap-3">
               <LiveButton />
               <h1 className="text-xl md:text-3xl font-bold text-amber-800 font-serif">
@@ -138,7 +150,6 @@ function Home() {
               </h1>
             </div>
           </div>
-          
         </div>
 
         {/* Live Dashboard */}
@@ -149,7 +160,6 @@ function Home() {
               <FaMedal className="mr-2" />
               Group Rankings
             </h2>
-            
           </div>
 
           {/* Dashboard Content */}
@@ -164,7 +174,7 @@ function Home() {
                 <thead className="bg-amber-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase tracking-wider">
-                      Rank
+                      
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-amber-800 uppercase tracking-wider">
                       Group
@@ -196,21 +206,24 @@ function Home() {
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         {group.totalPoints > 0 ? (
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              index === 0
-                                ? "bg-yellow-500 text-white"
-                                : index === 1
-                                ? "bg-gray-400 text-white"
-                                : index === 2
-                                ? "bg-amber-700 text-white"
-                                : "bg-amber-100 text-amber-800"
-                            }`}
-                          >
-                            {index + 1}
-                          </span>
+                          <div className="flex items-center">
+                            
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-300 shadow-sm">
+                              <img
+                                src={GROUP_LOGOS[group.groupName]}
+                                alt={group.groupName}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-xs text-gray-400">-</span>
+                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 opacity-50">
+                            <img
+                              src={GROUP_LOGOS[group.groupName]}
+                              alt={group.groupName}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-amber-900">
@@ -242,6 +255,7 @@ function Home() {
             </div>
           )}
         </div>
+        
         {/* Dashboard Controls */}
         <div className="max-w-6xl mx-auto flex justify-between mb-6">
           <button
@@ -255,7 +269,7 @@ function Home() {
 
           <button
             onClick={openModal}
-            className="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all"
+            className="flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all"
           >
             <FaPlusCircle className="mr-2" />
             New Entry
